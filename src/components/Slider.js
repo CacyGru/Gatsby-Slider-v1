@@ -6,11 +6,14 @@ import Slide from '../components/Slide';
 import Arrow from '../components/Arrow.js';
 import Dots from '../components/Dots.js';
 
+const getWidth = () => window.innerWidth;
+
+
 /**
  * @function Slider
  */
 const Slider = (props) => {
-  const getWidth = () => window.innerWidth;
+  
 
   const [state, setState] = useState({
     activeIndex: 0,
@@ -18,7 +21,22 @@ const Slider = (props) => {
     transition: 0.45,
   });
 
-  const { translate, transition, activeIndex } = state;
+  const { translate, transition, activeIndex } = state
+  const autoPlayRef = useRef()
+
+  useEffect(() => {
+    autoPlayRef.current = nextSlide
+  })
+
+  useEffect(() =>{
+    const play = () => {
+      autoPlayRef.current()
+    }
+if(props.autoPlay !== null) {
+    const interval = setInterval(play, props.autoPlay * 1000)
+    return () => clearInterval(interval)
+  }
+  }, [props.autoPlay])
 
   const nextSlide = () => {
     if (activeIndex === props.slides.length - 1) {
@@ -64,13 +82,24 @@ const Slider = (props) => {
         ))}
       </SliderContent>
 
+{!props.autoPlay && ( 
+    <>
       <Arrow direction="left" handleClick={prevSlide} />
       <Arrow direction="right" handleClick={nextSlide} />
+    
+    </>
+  )}
 
       <Dots slides={props.slides} activeIndex={activeIndex} />
     </div>
+    
   );
 };
+
+Slider.defaultProps = {
+  slides: [],
+  autoPlay: null
+}
 
 const SliderCSS = css`
   position: relative;

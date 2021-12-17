@@ -16,7 +16,7 @@ const App = () => {
   return (
     <div>
       <Nav />
-      <Slider slides={images} />
+      <Slider slides={images} autoPlay={5}/>
     </div>
   );
 };
